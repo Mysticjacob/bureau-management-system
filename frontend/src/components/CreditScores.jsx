@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 const CreditScores = () => {
   const [users, setUsers] = useState([]);
-  const [editingUser, setEditingUser] = useState(null); // State to track the user being updated
-  const [updatedCreditScore, setUpdatedCreditScore] = useState(""); // State for the new credit score
+  const [editingUser, setEditingUser] = useState(null);
+  const [updatedCreditScore, setUpdatedCreditScore] = useState("");
 
   // Fetch users from backend
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        // Update to the production URL (use environment variable for production flexibility)
-        const response = await axios.get("https://bureau-management-system-4828.vercel.app/users");
+        const response = await axios.get(`${API_BASE_URL}/users`);
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -24,28 +25,30 @@ const CreditScores = () => {
   // Handle update credit score
   const handleUpdateCreditScore = async (e) => {
     e.preventDefault();
+    if (!updatedCreditScore) return;
+
     try {
-      // Update to the production URL (use environment variable for production flexibility)
-      const response = await axios.put(`https://bureau-management-system-4828.vercel.app/users/${editingUser}`, {
+      const response = await axios.put(`${API_BASE_URL}/users/${editingUser}`, {
         creditScore: updatedCreditScore,
       });
-      setUsers(
-        users.map((user) =>
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
           user._id === editingUser ? { ...user, creditScore: response.data.creditScore } : user
         )
       );
-      setEditingUser(null); // Reset editing state
-      setUpdatedCreditScore(""); // Clear the input field
+
+      setEditingUser(null);
+      setUpdatedCreditScore("");
     } catch (error) {
       console.error("Error updating credit score:", error);
     }
   };
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
       <h1>Credit Scores</h1>
 
-      {/* Update Credit Score Form */}
       {editingUser && (
         <form onSubmit={handleUpdateCreditScore} style={{ marginBottom: "20px" }}>
           <input
@@ -56,6 +59,9 @@ const CreditScores = () => {
             required
           />
           <button type="submit">Update Credit Score</button>
+          <button type="button" onClick={() => setEditingUser(null)} style={{ marginLeft: "10px" }}>
+            Cancel
+          </button>
         </form>
       )}
 
@@ -75,7 +81,12 @@ const CreditScores = () => {
               <td style={{ border: "1px solid #ddd", padding: "8px" }}>{user.name}</td>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}>{user.creditScore}</td>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                <button onClick={() => setEditingUser(user._id)}>Edit</button>
+                <button onClick={() => {
+                  setEditingUser(user._id);
+                  setUpdatedCreditScore(user.creditScore || "");
+                }}>
+                  Edit
+                </button>
               </td>
             </tr>
           ))}
