@@ -14,12 +14,16 @@ const UsersPage = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
 
+  // Get the API URL from environment variables
+  const backendUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+  // Fetch data from API
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [usersRes, loansRes] = await Promise.all([
-          axios.get("http://localhost:5000/users"),
-          axios.get("http://localhost:5000/loans"),
+          axios.get(`${backendUrl}/users`),
+          axios.get(`${backendUrl}/loans`),
         ]);
         setUsers(usersRes.data);
         setLoans(loansRes.data);
@@ -31,16 +35,18 @@ const UsersPage = () => {
     };
 
     fetchData();
-  }, []);
+  }, [backendUrl]);
 
+  // Get loans for a user
   const getUserLoans = (userId) => {
     return loans.filter((loan) => loan.userId?._id === userId);
   };
 
+  // Add a new user
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/users", newUser);
+      const response = await axios.post(`${backendUrl}/users`, newUser);
       setUsers([...users, response.data]);
       setNewUser({ name: "", email: "", phone: "", password: "" });
     } catch (err) {
@@ -48,24 +54,27 @@ const UsersPage = () => {
     }
   };
 
+  // Delete a user
   const handleDeleteUser = async (userId) => {
     try {
-      await axios.delete(`http://localhost:5000/users/${userId}`);
+      await axios.delete(`${backendUrl}/users/${userId}`);
       setUsers(users.filter((user) => user._id !== userId));
     } catch (err) {
       console.error("Error deleting user:", err);
     }
   };
 
+  // Edit a user
   const handleEditClick = (user) => {
     setEditingUser(user._id);
     setUpdateForm({ name: user.name, email: user.email, phone: user.phone, password: user.password || "" });
   };
 
+  // Update a user
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://localhost:5000/users/${editingUser}`, updateForm);
+      const response = await axios.put(`${backendUrl}/users/${editingUser}`, updateForm);
       setUsers(users.map((user) => (user._id === editingUser ? response.data : user)));
       setEditingUser(null);
       setUpdateForm({ name: "", email: "", phone: "", password: "" });
@@ -73,6 +82,8 @@ const UsersPage = () => {
       console.error("Error updating user:", err);
     }
   };
+
+  // Login logic for admin
   const handleLogin = (e) => {
     e.preventDefault();
     if (password === "password123") {
@@ -82,9 +93,11 @@ const UsersPage = () => {
     }
   };
 
+  // Loading and error handling
   if (loading) return <p>Loading data...</p>;
   if (error) return <p>{error}</p>;
 
+  // Admin login form
   if (!authenticated) {
     return (
       <div style={{ textAlign: "center", marginTop: "100px" }}>
@@ -102,7 +115,6 @@ const UsersPage = () => {
       </div>
     );
   }
-  
 
   return (
     <div style={{ padding: "20px" }}>
@@ -110,20 +122,68 @@ const UsersPage = () => {
 
       {/* Add user form */}
       <form onSubmit={handleAddUser} style={{ marginBottom: "20px" }}>
-        <input type="text" placeholder="Name" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} required />
-        <input type="email" placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} required />
-        <input type="text" placeholder="Phone" value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} required />
-        <input type="password" placeholder="Password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} required />
+        <input
+          type="text"
+          placeholder="Name"
+          value={newUser.name}
+          onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+          required
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={newUser.email}
+          onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Phone"
+          value={newUser.phone}
+          onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={newUser.password}
+          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+          required
+        />
         <button type="submit">Add User</button>
       </form>
 
       {/* Update user form */}
       {editingUser && (
         <form onSubmit={handleUpdateUser} style={{ marginBottom: "20px" }}>
-          <input type="text" placeholder="Name" value={updateForm.name} onChange={(e) => setUpdateForm({ ...updateForm, name: e.target.value })} required />
-          <input type="email" placeholder="Email" value={updateForm.email} onChange={(e) => setUpdateForm({ ...updateForm, email: e.target.value })} required />
-          <input type="text" placeholder="Phone" value={updateForm.phone} onChange={(e) => setUpdateForm({ ...updateForm, phone: e.target.value })} required />
-          <input type="password" placeholder="Password" value={updateForm.password} onChange={(e) => setUpdateForm({ ...updateForm, password: e.target.value })} required />
+          <input
+            type="text"
+            placeholder="Name"
+            value={updateForm.name}
+            onChange={(e) => setUpdateForm({ ...updateForm, name: e.target.value })}
+            required
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={updateForm.email}
+            onChange={(e) => setUpdateForm({ ...updateForm, email: e.target.value })}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Phone"
+            value={updateForm.phone}
+            onChange={(e) => setUpdateForm({ ...updateForm, phone: e.target.value })}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={updateForm.password}
+            onChange={(e) => setUpdateForm({ ...updateForm, password: e.target.value })}
+            required
+          />
           <button type="submit">Update User</button>
         </form>
       )}

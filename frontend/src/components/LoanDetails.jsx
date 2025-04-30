@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const LoanDetails = ({ userId }) => { // Assuming userId is passed as a prop
+const LoanDetails = ({ userId }) => {
   const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,7 +10,10 @@ const LoanDetails = ({ userId }) => { // Assuming userId is passed as a prop
   useEffect(() => {
     const fetchLoans = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/loans/user/${userId}`);
+        // Use environment variable or default to localhost for development
+        const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+        const response = await axios.get(`${API_BASE_URL}/loans/user/${userId}`);
         setLoans(response.data);
         setLoading(false);
       } catch (err) {

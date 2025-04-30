@@ -10,7 +10,10 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/users/${user._id');
+        // Use environment variable or default to localhost for development
+        const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+        
+        const response = await axios.get(`${API_BASE_URL}/users/${user._id}`);
         setUser(response.data);
         setLoading(false);
       } catch (err) {
@@ -19,14 +22,18 @@ const UserProfile = () => {
       }
     };
 
-    fetchUser();
-  }, []);
+    // Assuming there's a user ID already available, like from a global state or URL params.
+    if (user && user._id) {
+      fetchUser();
+    }
+  }, [user]);
 
   // Handle form submission for updating user data
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/users/${user._id}`, user);
+      const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      await axios.put(`${API_BASE_URL}/users/${user._id}`, user);
       alert("User details updated successfully!");
     } catch (err) {
       alert("Failed to update user details.");

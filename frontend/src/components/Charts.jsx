@@ -32,8 +32,8 @@ const Charts = () => {
   useEffect(() => {
     const fetchTrendData = async () => {
       try {
-        // Fetch users from the backend
-        const response = await axios.get("http://localhost:5000/users");
+        // Update this URL to your deployed backend API
+        const response = await axios.get("https://bureau-management-system-4828.vercel.app/users");
         const users = response.data;
 
         // Extract data for the chart

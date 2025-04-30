@@ -10,7 +10,8 @@ const CreditScores = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/users");
+        // Update to the production URL (use environment variable for production flexibility)
+        const response = await axios.get("https://bureau-management-system-4828.vercel.app/users");
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -24,7 +25,8 @@ const CreditScores = () => {
   const handleUpdateCreditScore = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://localhost:5000/users/${editingUser}`, {
+      // Update to the production URL (use environment variable for production flexibility)
+      const response = await axios.put(`https://bureau-management-system-4828.vercel.app/users/${editingUser}`, {
         creditScore: updatedCreditScore,
       });
       setUsers(

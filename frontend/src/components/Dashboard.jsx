@@ -10,10 +10,14 @@ const Dashboard = () => {
   });
   const [creditScores, setCreditScores] = useState([]);
 
+  // Fetch stats function
   const fetchStats = async () => {
     try {
-      const usersResponse = await axios.get("http://localhost:5000/users");
-      const loansResponse = await axios.get("http://localhost:5000/loans");
+      // Use environment variable or default to localhost for development
+      const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+      const usersResponse = await axios.get(`${API_BASE_URL}/users`);
+      const loansResponse = await axios.get(`${API_BASE_URL}/loans`);
 
       const totalUsers = usersResponse.data.length;
       const totalLoans = loansResponse.data.length;
@@ -37,6 +41,7 @@ const Dashboard = () => {
     }
   };
 
+  // Fetch data when component mounts
   useEffect(() => {
     fetchStats(); // Fetch stats on component mount
   }, []);

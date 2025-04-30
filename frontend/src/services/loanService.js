@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000"; 
+// Use environment variable for API base URL
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000"; 
 
 // Fetch all loans
 export const getLoans = async () => {
@@ -9,7 +10,7 @@ export const getLoans = async () => {
     return response.data; // Returns the list of loans
   } catch (error) {
     console.error("Error fetching loans:", error);
-    throw error;
+    throw error; // Rethrow the error to be handled elsewhere
   }
 };
 
@@ -20,7 +21,7 @@ export const getLoanById = async (loanId) => {
     return response.data; // Returns loan details
   } catch (error) {
     console.error("Error fetching loan details:", error);
-    throw error;
+    throw error; // Rethrow the error to be handled elsewhere
   }
 };
 
@@ -33,6 +34,6 @@ export const updateLoanStatus = async (loanId, status) => {
     return response.data; // Returns success message
   } catch (error) {
     console.error("Error updating loan status:", error);
-    throw error;
+    throw error; // Rethrow the error to be handled elsewhere
   }
 };

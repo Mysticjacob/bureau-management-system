@@ -11,8 +11,10 @@ const UserPortal = () => {
   const [newLoanAmount, setNewLoanAmount] = useState("");
   const [error, setError] = useState(""); 
 
-  useEffect(() => {
+  // Get the API URL from environment variables
+  const backendUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
+  useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
       setUser(storedUser);
@@ -25,7 +27,7 @@ const UserPortal = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/users", formData);
+      const res = await axios.post(`${backendUrl}/users`, formData);
       alert("Registration successful!");
       setUser(res.data);
       fetchUserLoans(res.data._id);
@@ -42,7 +44,7 @@ const UserPortal = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.get("http://localhost:5000/users");
+      const res = await axios.get(`${backendUrl}/users`);
       const foundUser = res.data.find(
         (u) =>
           u.email.trim().toLowerCase() === formData.email.trim().toLowerCase() &&
@@ -65,7 +67,7 @@ const UserPortal = () => {
 
   const fetchUserLoans = async (userId) => {
     try {
-      const res = await axios.get(`http://localhost:5000/loans/user/${userId}`);
+      const res = await axios.get(`${backendUrl}/loans/user/${userId}`);
       setLoans(res.data);
     } catch (err) {
       setError("Failed to fetch loans.");
@@ -75,7 +77,7 @@ const UserPortal = () => {
 
   const fetchUserTransactions = async (userId) => {
     try {
-      const res = await axios.get(`http://localhost:5000/transactions/${userId}`);
+      const res = await axios.get(`${backendUrl}/transactions/${userId}`);
       setTransactions(res.data);
     } catch (err) {
       setError("Failed to fetch transactions.");
@@ -90,7 +92,7 @@ const UserPortal = () => {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:5000/loans", {
+      const res = await axios.post(`${backendUrl}/loans`, {
         userId: user._id,
         amount: Number(newLoanAmount),
       });
@@ -108,14 +110,14 @@ const UserPortal = () => {
       const loan = loans.find((loan) => loan._id === loanId);
       if (!loan) return alert("Loan not found.");
 
-      await axios.post("http://localhost:5000/transactions", {
+      await axios.post(`${backendUrl}/transactions`, {
         userId: user._id,
         loanId: loanId,
         amount: loan.amount,
         type: "payment",
       });
 
-      await axios.delete(`http://localhost:5000/loans/${loanId}`);
+      await axios.delete(`${backendUrl}/loans/${loanId}`);
       setLoans(loans.filter((loan) => loan._id !== loanId));
       alert("Loan paid successfully!");
     } catch (err) {
