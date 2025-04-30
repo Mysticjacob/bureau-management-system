@@ -1,0 +1,182 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import CreditScores from '../components/CreditScores';
+import '../styles/UsersStyles.css';
+
+const UsersPage = () => {
+  const [users, setUsers] = useState([]);
+  const [loans, setLoans] = useState([]);
+  const [newUser, setNewUser] = useState({ name: "", email: "", phone: "", password: "" });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [editingUser, setEditingUser] = useState(null);
+  const [updateForm, setUpdateForm] = useState({ name: "", email: "", phone: "", password: "" });
+  const [authenticated, setAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [usersRes, loansRes] = await Promise.all([
+          axios.get("http://localhost:5000/users"),
+          axios.get("http://localhost:5000/loans"),
+        ]);
+        setUsers(usersRes.data);
+        setLoans(loansRes.data);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to fetch data.");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const getUserLoans = (userId) => {
+    return loans.filter((loan) => loan.userId?._id === userId);
+  };
+
+  const handleAddUser = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:5000/users", newUser);
+      setUsers([...users, response.data]);
+      setNewUser({ name: "", email: "", phone: "", password: "" });
+    } catch (err) {
+      console.error("Error adding user:", err);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      await axios.delete(`http://localhost:5000/users/${userId}`);
+      setUsers(users.filter((user) => user._id !== userId));
+    } catch (err) {
+      console.error("Error deleting user:", err);
+    }
+  };
+
+  const handleEditClick = (user) => {
+    setEditingUser(user._id);
+    setUpdateForm({ name: user.name, email: user.email, phone: user.phone, password: user.password || "" });
+  };
+
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(`http://localhost:5000/users/${editingUser}`, updateForm);
+      setUsers(users.map((user) => (user._id === editingUser ? response.data : user)));
+      setEditingUser(null);
+      setUpdateForm({ name: "", email: "", phone: "", password: "" });
+    } catch (err) {
+      console.error("Error updating user:", err);
+    }
+  };
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (password === "password123") {
+      setAuthenticated(true);
+    } else {
+      alert("Wrong password!");
+    }
+  };
+
+  if (loading) return <p>Loading data...</p>;
+  if (error) return <p>{error}</p>;
+
+  if (!authenticated) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "100px" }}>
+        <h2>Admin Login</h2>
+        <form onSubmit={handleLogin}>
+          <input
+            type="password"
+            placeholder="Enter Admin Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit" style={{ marginLeft: "10px" }}>Login</button>
+        </form>
+      </div>
+    );
+  }
+  
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Users Management</h1>
+
+      {/* Add user form */}
+      <form onSubmit={handleAddUser} style={{ marginBottom: "20px" }}>
+        <input type="text" placeholder="Name" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} required />
+        <input type="email" placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} required />
+        <input type="text" placeholder="Phone" value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} required />
+        <input type="password" placeholder="Password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} required />
+        <button type="submit">Add User</button>
+      </form>
+
+      {/* Update user form */}
+      {editingUser && (
+        <form onSubmit={handleUpdateUser} style={{ marginBottom: "20px" }}>
+          <input type="text" placeholder="Name" value={updateForm.name} onChange={(e) => setUpdateForm({ ...updateForm, name: e.target.value })} required />
+          <input type="email" placeholder="Email" value={updateForm.email} onChange={(e) => setUpdateForm({ ...updateForm, email: e.target.value })} required />
+          <input type="text" placeholder="Phone" value={updateForm.phone} onChange={(e) => setUpdateForm({ ...updateForm, phone: e.target.value })} required />
+          <input type="password" placeholder="Password" value={updateForm.password} onChange={(e) => setUpdateForm({ ...updateForm, password: e.target.value })} required />
+          <button type="submit">Update User</button>
+        </form>
+      )}
+
+      {/* Users table */}
+      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Password</th>
+            <th>Loans</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => {
+            const userLoans = getUserLoans(user._id);
+            return (
+              <tr key={user._id}>
+                <td>{user._id}</td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.phone}</td>
+                <td>{user.password}</td>
+                <td>
+                  {userLoans.length > 0 ? (
+                    userLoans.map((loan) => (
+                      <div key={loan._id}>
+                        <p>Amount: ${loan.amount}</p>
+                        <p>Status: {loan.status}</p>
+                        <p>Balance: ${loan.balance}</p>
+                        <hr />
+                      </div>
+                    ))
+                  ) : (
+                    "No loans"
+                  )}
+                </td>
+                <td>
+                  <button onClick={() => handleDeleteUser(user._id)}>Delete</button>
+                  <button onClick={() => handleEditClick(user)} style={{ marginLeft: "5px" }}>Edit</button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <CreditScores />
+    </div>
+  );
+};
+
+export default UsersPage;
