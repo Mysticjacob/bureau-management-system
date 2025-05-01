@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import '../styles/Charts.css';
+import "../styles/Charts.css";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,38 +17,28 @@ import axios from "axios";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const Charts = () => {
-  const [chartData, setChartData] = useState({
-    labels: [], // Dynamically updated with user names or IDs
-    datasets: [
-      {
-        label: "Credit Score Trend",
-        data: [], // Dynamically updated with credit scores
-        borderColor: "blue",
-        backgroundColor: "rgba(0, 0, 255, 0.1)",
-      },
-    ],
-  });
+  const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
     const fetchTrendData = async () => {
       try {
-        // Update this URL to your deployed backend API
-        const response = await axios.get("https://bureau-management-system-4828.vercel.app/users");
+        const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+        const response = await axios.get(`${API_BASE_URL}/users`);
         const users = response.data;
 
-        // Extract data for the chart
         const labels = users.map((user) => user.name || `User ${user._id}`);
-        const data = users.map((user) => user.creditScore || 0);
+        const data = users.map((user) => user.creditScore ?? 0);
 
-        // Update the chart data
         setChartData({
           labels,
           datasets: [
             {
               label: "Credit Score Trend",
               data,
-              borderColor: "blue",
-              backgroundColor: "rgba(0, 0, 255, 0.1)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              tension: 0.3,
+              fill: true,
             },
           ],
         });
@@ -60,21 +50,44 @@ const Charts = () => {
     fetchTrendData();
   }, []);
 
-  // Chart options
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top",
       },
       title: {
         display: true,
-        text: "Credit Score Trends",
+        text: "User Credit Score Trend",
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Credit Score",
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: "Users",
+        },
       },
     },
   };
 
-  return <Line data={chartData} options={options} />;
+  return (
+    <div className="chart-container">
+      {chartData ? (
+        <Line data={chartData} options={options} />
+      ) : (
+        <p>Loading chart data...</p>
+      )}
+    </div>
+  );
 };
 
 export default Charts;
