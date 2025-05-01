@@ -15,15 +15,15 @@ const UsersPage = () => {
   const [password, setPassword] = useState("");
 
   // Get the API URL from environment variables
-  const backendUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  const backendUrl = process.env.REACT_APP_API_URL || "https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/";
 
   // Fetch data from API
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [usersRes, loansRes] = await Promise.all([
-          axios.get(`${backendUrl}/users`),
-          axios.get(`${backendUrl}/loans`),
+          axios.get(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users`),
+          axios.get(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/loans`),
         ]);
         setUsers(usersRes.data);
         setLoans(loansRes.data);
@@ -46,7 +46,7 @@ const UsersPage = () => {
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${backendUrl}/users`, newUser);
+      const response = await axios.post(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users`, newUser);
       setUsers([...users, response.data]);
       setNewUser({ name: "", email: "", phone: "", password: "" });
     } catch (err) {
@@ -57,7 +57,7 @@ const UsersPage = () => {
   // Delete a user
   const handleDeleteUser = async (userId) => {
     try {
-      await axios.delete(`${backendUrl}/users/${userId}`);
+      await axios.delete(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users/${userId}`);
       setUsers(users.filter((user) => user._id !== userId));
     } catch (err) {
       console.error("Error deleting user:", err);
@@ -74,7 +74,7 @@ const UsersPage = () => {
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`${backendUrl}/users/${editingUser}`, updateForm);
+      const response = await axios.put(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users/${editingUser}`, updateForm);
       setUsers(users.map((user) => (user._id === editingUser ? response.data : user)));
       setEditingUser(null);
       setUpdateForm({ name: "", email: "", phone: "", password: "" });

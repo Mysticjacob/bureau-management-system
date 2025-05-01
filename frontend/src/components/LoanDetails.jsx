@@ -11,9 +11,9 @@ const LoanDetails = ({ userId }) => {
     const fetchLoans = async () => {
       try {
         // Use environment variable or default to localhost for development
-        const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+        const API_BASE_URL = process.env.REACT_APP_API_URL || "https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app";
 
-        const response = await axios.get(`${API_BASE_URL}/loans/user/${userId}`);
+        const response = await axios.get(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/loans/user/${userId}`);
         setLoans(response.data);
         setLoading(false);
       } catch (err) {

@@ -11,9 +11,9 @@ const UserProfile = () => {
     const fetchUser = async () => {
       try {
         // Use environment variable or default to localhost for development
-        const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+        const API_BASE_URL = process.env.REACT_APP_API_URL || "https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app";
         
-        const response = await axios.get(`${API_BASE_URL}/users/${user._id}`);
+        const response = await axios.get(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users/${user._id}`);
         setUser(response.data);
         setLoading(false);
       } catch (err) {
@@ -32,8 +32,8 @@ const UserProfile = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
-      await axios.put(`${API_BASE_URL}/users/${user._id}`, user);
+      const API_BASE_URL = process.env.REACT_APP_API_URL || "https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app";
+      await axios.put(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users/${user._id}`, user);
       alert("User details updated successfully!");
     } catch (err) {
       alert("Failed to update user details.");

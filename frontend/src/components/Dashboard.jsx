@@ -14,10 +14,10 @@ const Dashboard = () => {
   const fetchStats = async () => {
     try {
       // Use environment variable or default to localhost for development
-      const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      const API_BASE_URL = process.env.REACT_APP_API_URL || "https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app";
 
-      const usersResponse = await axios.get(`${API_BASE_URL}/users`);
-      const loansResponse = await axios.get(`${API_BASE_URL}/loans`);
+      const usersResponse = await axios.get(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users`);
+      const loansResponse = await axios.get(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/loans`);
 
       const totalUsers = usersResponse.data.length;
       const totalLoans = loansResponse.data.length;

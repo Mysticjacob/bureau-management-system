@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.REACT_APP_API_URL || "https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app";
 
 const CreditScores = () => {
   const [users, setUsers] = useState([]);
@@ -12,7 +12,7 @@ const CreditScores = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/users`);
+        const response = await axios.get(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users`);
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -28,7 +28,7 @@ const CreditScores = () => {
     if (!updatedCreditScore) return;
 
     try {
-      const response = await axios.put(`${API_BASE_URL}/users/${editingUser}`, {
+      const response = await axios.put(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users/${editingUser}`, {
         creditScore: updatedCreditScore,
       });
 

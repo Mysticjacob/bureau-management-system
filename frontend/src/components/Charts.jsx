@@ -22,8 +22,8 @@ const Charts = () => {
   useEffect(() => {
     const fetchTrendData = async () => {
       try {
-        const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
-        const response = await axios.get(`${API_BASE_URL}/users`);
+        const API_BASE_URL = process.env.REACT_APP_API_URL || "https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app";
+        const response = await axios.get(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users`);
         const users = response.data;
 
         const labels = users.map((user) => user.name || `User ${user._id}`);

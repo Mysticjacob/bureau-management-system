@@ -6,7 +6,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || "https://bureau-management
 // Fetch credit score for a user
 export const getCreditScore = async (userId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/creditscore/${userId}`);
+    const response = await axios.get(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/creditscore/${userId}`);
     return response.data; 
   } catch (error) {
     console.error("Error fetching credit score:", error);
@@ -17,7 +17,7 @@ export const getCreditScore = async (userId) => {
 // Update credit score for a user
 export const updateCreditScore = async (userId, creditScore) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/creditscore/${userId}`, {
+    const response = await axios.post(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/creditscore/${userId}`, {
       creditScore,
     });
     return response.data; 

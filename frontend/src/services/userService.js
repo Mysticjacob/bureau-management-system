@@ -5,7 +5,7 @@ const API_BASE_URL = "https://bureau-management-system-o4t77k4o0-selekanes-proje
 
 export const getUsers = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/users`);
+    const response = await axios.get(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users`);
     return response.data;
   } catch (error) {
     console.error("Error fetching users:", error);
