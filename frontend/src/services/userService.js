@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Update to your deployed backend URL
-const API_BASE_URL = "https://bureau-management-system-4828.vercel.app"; 
+const API_BASE_URL = "https://bureau-management-system-o4t77k4o0-selekanes-projects-badb545a.vercel.app/"; 
 
 export const getUsers = async () => {
   try {

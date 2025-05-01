@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Use environment variable for API base URL
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000"; 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "https://bureau-management-system-o4t77k4o0-selekanes-projects-badb545a.vercel.app/"; 
 
 // Fetch all loans
 export const getLoans = async () => {
