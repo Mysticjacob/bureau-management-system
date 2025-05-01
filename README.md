@@ -1,1 +1,1 @@
-# bureau-management-system
+Admin password on Admin dashboard: password123
