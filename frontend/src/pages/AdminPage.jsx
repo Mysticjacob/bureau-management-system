@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { FaSun, FaMoon } from 'react-icons/fa';
 import CreditScores from '../components/CreditScores';
 import '../styles/UsersStyles.css';
+import { Link } from "react-router-dom"; 
 
 const UsersPage = () => {
+    const [darkMode, setDarkMode] = useState(false);
+  
+    const toggleDarkMode = () => {
+      setDarkMode(!darkMode);
+      document.body.classList.toggle('dark-mode', !darkMode);
+    };
+
   const [users, setUsers] = useState([]);
   const [loans, setLoans] = useState([]);
   const [newUser, setNewUser] = useState({ name: "", email: "", phone: "", password: "" });
@@ -22,8 +31,8 @@ const UsersPage = () => {
     const fetchData = async () => {
       try {
         const [usersRes, loansRes] = await Promise.all([
-          axios.get(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users`),
-          axios.get(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/loans`),
+          axios.get(`${backendUrl}users`),
+          axios.get(`${backendUrl}loans`),
         ]);
         setUsers(usersRes.data);
         setLoans(loansRes.data);
@@ -37,16 +46,14 @@ const UsersPage = () => {
     fetchData();
   }, [backendUrl]);
 
-  // Get loans for a user
   const getUserLoans = (userId) => {
     return loans.filter((loan) => loan.userId?._id === userId);
   };
 
-  // Add a new user
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users`, newUser);
+      const response = await axios.post(`${backendUrl}users`, newUser);
       setUsers([...users, response.data]);
       setNewUser({ name: "", email: "", phone: "", password: "" });
     } catch (err) {
@@ -54,27 +61,24 @@ const UsersPage = () => {
     }
   };
 
-  // Delete a user
   const handleDeleteUser = async (userId) => {
     try {
-      await axios.delete(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users/${userId}`);
+      await axios.delete(`${backendUrl}users/${userId}`);
       setUsers(users.filter((user) => user._id !== userId));
     } catch (err) {
       console.error("Error deleting user:", err);
     }
   };
 
-  // Edit a user
   const handleEditClick = (user) => {
     setEditingUser(user._id);
     setUpdateForm({ name: user.name, email: user.email, phone: user.phone, password: user.password || "" });
   };
 
-  // Update a user
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`https://bureau-management-system-9w1ya0gho-selekanes-projects-badb545a.vercel.app/users/${editingUser}`, updateForm);
+      const response = await axios.put(`${backendUrl}users/${editingUser}`, updateForm);
       setUsers(users.map((user) => (user._id === editingUser ? response.data : user)));
       setEditingUser(null);
       setUpdateForm({ name: "", email: "", phone: "", password: "" });
@@ -83,7 +87,6 @@ const UsersPage = () => {
     }
   };
 
-  // Login logic for admin
   const handleLogin = (e) => {
     e.preventDefault();
     if (password === "password123") {
@@ -93,14 +96,20 @@ const UsersPage = () => {
     }
   };
 
-  // Loading and error handling
   if (loading) return <p>Loading data...</p>;
   if (error) return <p>{error}</p>;
 
-  // Admin login form
   if (!authenticated) {
     return (
-      <div style={{ textAlign: "center", marginTop: "100px" }}>
+       <div className={`home-container ${darkMode ? 'dark' : ''}`}>
+          <button className="toggle-dark" onClick={toggleDarkMode}>
+            {darkMode ? <FaSun /> : <FaMoon />}
+          </button>
+          <div style={{ marginTop: "30px" }}>
+        <Link to="/" style={{ textDecoration: "none", color: "blue", fontWeight: "bold" }}>
+          HOME
+        </Link>
+      </div>
         <h2>Admin Login</h2>
         <form onSubmit={handleLogin}>
           <input
@@ -117,7 +126,12 @@ const UsersPage = () => {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className={`home-container ${darkMode ? 'dark' : ''}`}>
+          <button className="toggle-dark" onClick={toggleDarkMode}>
+            {darkMode ? <FaSun /> : <FaMoon />}
+          </button>
+    
+
       <h1>Users Management</h1>
 
       {/* Add user form */}
@@ -235,7 +249,12 @@ const UsersPage = () => {
         </tbody>
       </table>
       <CreditScores />
-    </div>
+     <div style={{ marginTop: "30px" }}>
+        <Link to="/" style={{ textDecoration: "none", color: "blue", fontWeight: "bold" }}>
+          Log Out
+        </Link>
+      </div>
+      </div>
   );
 };
 

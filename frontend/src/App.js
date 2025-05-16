@@ -3,18 +3,17 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import HomePage from "./pages/HomePage";
 import UsersPage from "./pages/AdminPage";
-import LoansPage from "./pages/UserPortalPage";
+import UserPortal from "./pages/UserPortalPage";
 import Dashboard from "./components/Dashboard";
 import CreditScores from "./components/CreditScores";
 import './App.css';
 function App() {
   return (
     <Router>
-      <Navigation />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/users" element={<UsersPage />} />
-        <Route path="/loans" element={<LoansPage />} />
+        <Route path="/loans" element={<UserPortal />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/creditscores" element={<CreditScores />} />
       </Routes>
